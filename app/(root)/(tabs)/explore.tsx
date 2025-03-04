@@ -38,33 +38,42 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {isFocused && !scanned ? (
-        <CameraView
-          ref={cameraRef}
-          style={styles.camera}
-          barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-        />
+  {isFocused && !scanned ? (
+    <>
+      <CameraView
+        ref={cameraRef}
+        facing="back"
+        style={styles.camera}
+        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+      />
+      <View style={styles.scanButtonContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => setScanned(false)}>
+          <Text style={styles.buttonText}>Scan Again</Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  ) : (
+    <View style={styles.resultContainer}>
+      {qrData ? (
+        <ScrollView style={styles.dataContainer}>
+          <Text style={styles.header}>Product Details</Text>
+          {qrData.split("\n").map((line, index) => (
+            <Text key={index} style={styles.qrText}>
+              {line}
+            </Text>
+          ))}
+        </ScrollView>
       ) : (
-        <View style={styles.resultContainer}>
-          {qrData ? (
-            <ScrollView style={styles.dataContainer}>
-              <Text style={styles.header}>Product Details</Text>
-              {qrData.split("\n").map((line, index) => (
-                <Text key={index} style={styles.qrText}>
-                  {line}
-                </Text>
-              ))}
-            </ScrollView>
-          ) : (
-            <Text style={styles.noDataText}>No data scanned</Text>
-          )}
-          <TouchableOpacity style={styles.button} onPress={() => setScanned(false)}>
-            <Text style={styles.buttonText}>Scan Again</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.noDataText}>No data scanned</Text>
       )}
+      <TouchableOpacity style={styles.button} onPress={() => setScanned(false)}>
+        <Text style={styles.buttonText}>Scan Again</Text>
+      </TouchableOpacity>
     </View>
+  )}
+</View>
+
   );
 }
 
@@ -72,12 +81,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  camera: {
-    flex: 1,
-    width: "100%",
+    // justifyContent: "center",
+    // alignItems: "center",
   },
   resultContainer: {
     width: "90%",
@@ -119,19 +124,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
+  camera: {
+    width: "100%",
+    height: "80%",
+  },
+  scanButtonContainer: {
+    top: 10,
+    alignSelf: "center",
+  },
   button: {
-    backgroundColor: "#0061FF", // Primary Blue Color
+    backgroundColor: "#0061FF",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 5
+    elevation: 5,
   },
   buttonText: {
     color: "#fff",
